@@ -1,0 +1,6 @@
+3315:3327	no diabetes ? no high blood pressure	dia4.html#no_diabetes_?_no_high_blood_pressure	any diabetes in your family	dia98.html#any_diabetes_in_your_family	1	1	1-1		 
+3315:3352	no diabetes ? no high blood pressure	dia4.html#no_diabetes_?_no_high_blood_pressure	does anyone in your family have a history of heart disease	dia69.html#does_anyone_in_your_family_have_a_history_of_heart_disease	1	0			 
+3315:3331	no diabetes ? no high blood pressure	dia4.html#no_diabetes_?_no_high_blood_pressure	any health problems in your family	dia13.html#any_health_problems_in_your_family	1	1			 
+3315:2429	no diabetes ? no high blood pressure	dia4.html#no_diabetes_?_no_high_blood_pressure	no diabetes or high blood pressure	dia10.html#no_diabetes_or_high_blood_pressure	0	0	0-0 1-1 4-3 5-4 6-5	3-0	apparently the source is about family history, while the target is about personal affliction
+3315:2428	no diabetes ? no high blood pressure	dia4.html#no_diabetes_?_no_high_blood_pressure	blood pressure	dia7.html#blood_pressure	0	0	5-0 6-1		 
+3315:260	no diabetes ? no high blood pressure	dia4.html#no_diabetes_?_no_high_blood_pressure	do you have high blood pressure	do_you_have_high_blood_pressure.html	0	0	4-3 5-4 6-5		apparently the source is about family history, while the target is about personal affliction

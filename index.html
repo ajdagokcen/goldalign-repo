@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<!--**************************************************************************************
+******************************************************************************************
+******************************************************************************************
+*****																				 *****
+*****	GoldAlign:	a graphical interface for gold-standard corpus annotation		 *****
+*****				of alignment and paraphrasing									 *****
+*****	Copyright (C) 2016 Ajda Gokcen												 *****
+*****																				 *****
+*****	This file is part of GoldAlign.												 *****
+*****																				 *****
+*****	GoldAlign is free software: you can redistribute it and/or modify			 *****
+*****	it under the terms of the GNU General Public License as published by		 *****
+*****	the Free Software Foundation, either version 3 of the License, or			 *****
+*****	(at your option) any later version.											 *****
+*****																				 *****
+*****	GoldAlign is distributed in the hope that it will be useful,				 *****
+*****	but WITHOUT ANY WARRANTY; without even the implied warranty of				 *****
+*****	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				 *****
+*****	GNU General Public License for more details.								 *****
+*****																				 *****
+*****	You should have received a copy of the GNU General Public License			 *****
+*****	along with GoldAlign.  If not, see <http://www.gnu.org/licenses/>.			 *****
+*****																				 *****
+******************************************************************************************
+******************************************************************************************
+*****																				 *****
+*****	GoldAlign, specifically in the file index.js, utilizes elements of			 *****
+*****	Chris Callison-Burch’s word alignment tool:									 *****
+*****																				 *****
+*****		Zaidan, Omar, and Chris Callison-Burch. "Fast. Cheap and Creative: 		 *****
+*****			Evaluating Translation Quality Using Amazon’s Mechanical Turk."		 *****
+*****			Proceedings of the 2009 Conference on Empirical Methods in 			 *****
+*****			Natural Language Processing. 2009.									 *****
+*****			<https://www.aclweb.org/anthology/D/D09/D09-1030.pdf>.				 *****
+*****		(see locally: pdf/callison-burch_2009.pdf)								 *****
+*****																				 *****
+*****		Callison-Burch, Chris, David Talbot, and Miles Osborne. 				 *****
+*****			"Statistical machine translation with word-and sentence-aligned 	 *****
+*****			parallel corpora." Proceedings of the 42nd Annual Meeting of the 	 *****
+*****			Association for Computational Linguistics. 2004.					 *****
+*****			<https://aclweb.org/anthology/P/P04/P04-1023.pdf>.					 *****
+*****		(see locally: pdf/callison-burch_2004.pdf)								 *****
+*****																				 *****
+******************************************************************************************
+******************************************************************************************
+****************************************************************************************-->
+
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+		<meta name="viewport" content="width=device-width">
+		<title>GoldAlign</title>
+		<link href="/css/fontawesome/css/font-awesome.min.css" rel="stylesheet">
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/css/bootstrap-dialog.min.css" rel="stylesheet">
+		<link href="/css/main.css" rel="stylesheet">
+
+		<link rel="icon" href="favicon.ico">
+		<link rel="shortcut icon" href="favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="favicon.ico">
+		<link rel="apple-touch-icon-precomposed" href="favicon.ico">
+	</head>
+
+	<body class="untext">
+		<script src="/js/jquery-2.1.0.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+		<script src="/js/bootstrap-dialog.min.js"></script>
+
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container-fluid row" onclick="window.scrollTo(0,0);">
+				<!--<div id="user_display" style="text-align:right"></div>-->
+				<div class="col-sm-6">
+					<div class="navbar-header">
+						<button id="navbutton" title="Main menu" type="button" class="navbar-left navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" style="padding:5px 10px">
+							<font color="white"><i class="fa fa-navicon"></i></font>
+						</button>
+						<a class="navbar-brand pull-left" title="GoldAlign: a graphical interface for gold-standard corpus annotation of alignment and paraphrasing"><img src="favicon.ico" id="ico"></img><span id="gold"> Gold</span><span id="align">Align</span></a>
+						<button id="userbutton" title="Settings" type="button" class="navbar-right navbar-toggle collapsed" data-toggle="collapse" data-target="#userbar" aria-expanded="false" aria-controls="navbar" style="padding:5px 10px">
+							<font color="white"><i class="fa fa-cogs"></i></font>
+						</button>
+					</div>
+					<div id="navbar" class="collapse navbar-collapse" style="text-align:center">
+						<ul class="nav navbar-nav">
+							<li class="active"><a id="mHome" title="Home" onclick="MakeVisible('Home')"><i class="fa fa-home fa-lg"></i></a></li>
+							<li><a id="mGuide" title="Guide" onclick="MakeVisible('Guide')"><i class="fa fa-book fa-lg"></i></a></li>
+							<li><a id="mDataset" title="Dataset Navigation" onclick="MakeVisible('Dataset')"><i class="fa fa-compass fa-lg"></i></a></li>
+							<li><a id="mBatch" title="Batch Navigation" onclick="MakeVisible('Batch')"><i class="fa fa-list fa-lg"></i></a></li>
+							<li><a id="mWorkspace" title="Workspace" onclick="MakeVisible('Workspace')"><i class="fa fa-pencil-square-o fa-lg"></i></a></li>
+						</ul>
+					</div>
+				</div><div class="col-sm-6">
+					<div id="userbar" class="collapse navbar-collapse" style="text-align:center">
+						<ul class="nav navbar-nav navbar-right">
+							<li class="disabled"><a onclick="MakeVisible('Home')"><div id="user_display"></div></a></li>
+							<li><a id="mSettings" title="Settings" onclick="MakeVisible('Settings')"><i class="fa fa-cog fa-lg"></i></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<center><div class="container"><center>
+			<div id="Home" class="module">
+				<div id="selection_widgets"></div>
+			</div>
+			<div id="Guide" class="module">
+				<div id="intro_text">
+					<h3><b><i class="fa fa-book"></i> Word alignment & paraphrase judgment task guide</b></h3><br>
+					<div class="panel-group" id="info-accordion">
+
+						<div class="panel list-group">
+							<a class="list-group-item list-group-item-info" data-toggle="collapse" data-target="#info-guidelines" data-parent="#info-accordion" title="Annotation Guidelines">Annotation Guidelines</a>
+							<div id="info-guidelines" class="sublinks collapse in">
+							    <div class="list-group-item">
+									<br><p>Word alignment annotation is often done on data where it is given that the two sentences being compared are paraphrases, and thus it is a matter of finding word-wise correspondences to support it.  This tool introduces non-paraphrase alignment as well, with the idea being that whether two sentences are paraphrases makes a difference in what the alignment ought to be.  Additionally, it is up to the user to determine whether they think a given sentence pair is paraphrasal or not based on context.</p><br>
+									<p>Here is <span class="blacklink"><b><a href="javascript:window.open('pdf/paraphrase_guidelines.pdf');">a full set of annotation guidelines</a></b></span> (also online <span class="blacklink"><b><a href="javascript:window.open('http://cs.jhu.edu/~ccb/publications/paraphrase_guidelines.pdf');">here</a></b></span>) that gives details on tricky (paraphrase) cases, plus <span class="blacklink"><b><a href="javascript:window.open('pdf/additional_guidelines.pdf');">additional guidelines</a></b></span> by the creators of this tool (which expound upon non-paraphrase cases).</p><br>
+								</div>
+							</div><!-- sublinks -->
+						</div><!-- panel -->
+
+						<div class="panel list-group">
+							<a class="list-group-item list-group-item-info" data-toggle="collapse" data-target="#info-tool" data-parent="#info-accordion" title="Tool Overview">Tool Overview</a>
+							<div id="info-tool" class="sublinks collapse">
+							    <div class="list-group-item">
+									<br><p>GoldAlign comprises six different pages, some of which are only visible when the necessary selections have been made.  The user can navigate between pages at any time without losing any progress, which is especially useful if it becomes necessary to consult the guide in the middle of annotating.</p><br>
+									<p>The pages include Home/Configuration, Guide, Dataset Navigation, Batch Navigation, Workspace, and Settings.</p><br>
+								</div>
+							    <div class="list-group-item">
+									<h3>Home/Configuration</h3><br>
+									<p>On the Home page, the user selects either the annotation or the arbitration task, the username(s) whose annotations are to be modified or referenced, and the dataset to be annotated.  Until a valid configuration is selected, the Dataset Navigation, Batch Navigation, and Workspace pages are inaccessible.</p><br>
+									<p>Note that new users and datasets cannot be created from within the tool.  This must be done by an administrator with direct access to the program's files; consult the <span class="blacklink"><b><a href="javascript:window.open('README.md');">README</a></b></span> for more information.</p><br>
+								</div>
+							    <div class="list-group-item">
+									<h3>Guide</h3><br>
+									<p>The Guide page provides some basic information about the tool and tasks.  The Task tabs contain keys for the meanings of different colors of squares in the alignment grid.</p><br>
+								</div>
+							    <div class="list-group-item">
+									<h3>Dataset Navigation</h3><br>
+									<p>The Dataset Navigation page shows the annotation completion status of all batches in the current dataset for the selected user.  This page is only viewable once a valid configuration has been selected on the Home page.</p><br>
+									<p>In annotation mode, possible statuses include Unstarted, Incomplete, Complete, Underway, and Read-only.  The former three are for batches not currently open in the workspace, while the latter two represent the two possible modes for a batch that is currently open in the workspace (Underway means the batch's annotations are being edited rather than simply viewed).</p><br>
+								</div>
+							    <div class="list-group-item">
+									<h3>Batch Navigation</h3><br>
+									<p>The Batch Navigation page contains a list of the sentence pairs in the currently open batch.  This page is only viewable once a batch has been opened on the Dataset Navigation page.</p><br>
+								</div>
+							    <div class="list-group-item">
+									<h3>Workspace</h3><br>
+									<p>The Workspace page comprises several elements that allow the user to generate modified alignment data files for the open batch, or to simply visualize the current annotations.  This page is only viewable once a batch has been opened on the Dataset Navigation page.</p><br>
+									<p>The context section provides context links to allow the user to better judge the paraphrase value of the two sentences.  The grid itself shows the alignment between the two sentences, with black and gray squares representing correspondences that are to be saved in the batch file.  The paraphrase judgment selection allows the user to give their decision regarding the paraphrase relation between the two sentences, and the optional comments section gives the user a chance to save whatever notes they see fit.</p><br>
+								</div>
+							    <div class="list-group-item">
+									<h3>Settings</h3><br>
+									<p>Accessible via the top right corner of the navigation bar, the Settings page displays a few user-adjustable variables that affect the behavior of the workspace.</p><br>
+									<p>Some of the options are actually only adjustable on the Workspace page itself, but are still shown for easy reference on the Settings page.</p><br>
+								</div>
+							</div><!-- sublinks -->
+						</div><!-- panel -->
+
+						<div class="panel list-group">
+							<a class="list-group-item list-group-item-info" data-toggle="collapse" data-target="#info-annotation" data-parent="#info-accordion" title="Task: Annotation">Task: Annotation</a>
+							<div id="info-annotation" class="sublinks collapse">
+							    <div class="list-group-item">
+									<h3>Task Instructions</h3><br>
+									<p>Given a grid showing a basic (computer-generated) initial alignment between two sentences, an annotating user corrects and determines their own take on the alignment.</p><br>
+									<p>Black-colored squares indicate clear correspondence, while gray-colored squares indicate possible correspondence.  The user's judgment regarding whether the two sentences are paraphrases should be a factor in determining the final alignment.  </p><br>
+									<p>The annotation process does not modify any of the original batch files.  Once a user has annotated a batch, their annotation may be compared with that of another user via arbitration in order to produce a final gold annotation.</p><br>
+								</div>
+							    <div class="list-group-item small">
+									<h3>Grid Color Key</h3><table>
+									<tr><td><table class="key-col">
+									<tr><td class="vLeft">User SURE</td><td class="black vOther"></td></tr>
+									<tr><td class="vLeft">User POSS</td><td class="gray vOther"></td></tr>
+									<tr><td class="vLeft">No selection</td><td class="white vOther"></td></tr>
+									</table></td></tr>
+									</table><br>
+								</div>
+							</div><!-- sublinks -->
+						</div><!-- panel -->
+
+						<div class="panel list-group">
+							<a class="list-group-item list-group-item-info" data-toggle="collapse" data-target="#info-arbitration" data-parent="#info-accordion" title="Task: Arbitration">Task: Arbitration</a>
+						    <div id="info-arbitration" class="sublinks collapse">
+							    <div class="list-group-item">
+									<h3>Task Instructions</h3><br>
+									<p>Batches that have been completely annotated by two users may then be arbitrated to produce a final gold annotation.  Given a grid showing the similarities and differences between two users' annotations, an arbiter user finalizes the alignment by deciding how to resolve any inconsistencies between annotators or other outstanding issues</p><br>
+									<p>Black-colored squares indicate clear correspondence, while gray-colored squares indicate possible correspondence.  The user's judgment regarding whether the two sentences are paraphrases should be a factor in determining the final alignment.</p><br>
+									<p>The arbitration process does not modify any of the files of the original two annotators.  And although an arbitration grid displays variously colored squares to indicate the original two users' annotations, only black and gray squares are stored in the final annotation.</p><br>
+								</div>
+							    <div class="list-group-item small">
+									<h3>Grid Color Key</h3><table>
+									<tr><td><table class="key-col">
+									<tr><td class="vLeft">Arbiter SURE</td><td class="black vOther"></td></tr>
+									<tr><td class="vLeft">Arbiter POSS</td><td class="gray vOther"></td></tr>
+									<tr><td class="vLeft">No selection</td><td class="white vOther"></td></tr>
+									</table></td><td><table class="key-col">
+									<tr><td class="vLeft">User A-only SURE</td><td class="red vOther"></td></tr>
+									<tr><td class="vLeft">User A SURE, User B POSS</td><td class="redpurple vOther"></td></tr>
+									<tr><td class="vLeft">Both users SURE</td><td class="purple vOther"></td></tr>
+									<tr><td class="vLeft">User A POSS, User B SURE</td><td class="bluepurple vOther"></td></tr>
+									<tr><td class="vLeft">User B-only SURE</td><td class="blue vOther"></td></tr>
+									</table></td><td><table class="key-col">
+									<tr><td class="vLeft">User A-only POSS</td><td class="lightred vOther"></td></tr>
+									<tr><td class="vLeft">Both users POSS</td><td class="lightpurple vOther"></td></tr>
+									<tr><td class="vLeft">User B-only POSS</td><td class="lightblue vOther"></td></tr>
+									</table></td></tr>
+									</table><br>
+								</div>
+							</div><!-- sublinks -->
+						</div><!-- panel -->
+
+					</div><!-- info-accordion -->
+
+				</div>
+			</div>
+			<div id="Dataset" class="module">
+				<div id="dataset_navigation">
+					<h3><i>No user or batch has been selected. If you believe they have and this message is still visible, there may be an issue with the file structure.</i></h3>
+				</div>
+			</div>
+			<div id="Batch" class="module">
+				<div id="batch_navigation">
+					<h3><i>There is currently no batch in progress.</i></h3>
+				</div>
+			</div>
+			<div id="Workspace" class="module">
+				<div id="grid_title">
+					<h3><i>There is currently no batch in progress.</i></h3>
+				</div>
+				<div id="form_buttons"></div>
+				<div id="context_links"></div>
+				<div id="word_table"></div>
+				<div id="paraphrase_judge"></div>
+				<div id="comment_box"></div>
+			</div>
+			<div id="Settings" class="module">
+				<div id="settings_page"></div>
+			</div>
+		</center></div></center>
+
+		<script src="index.js"></script>
+
+	</body>
+</html>

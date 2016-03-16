@@ -1,0 +1,53 @@
+#!/bin/bash
+
+##########################################################################################
+##########################################################################################
+##########################################################################################
+#####																				 #####
+#####	GoldAlign:	a graphical interface for gold-standard corpus annotation		 #####
+#####				of alignment and paraphrasing									 #####
+#####	Copyright (C) 2016 Ajda Gokcen												 #####
+#####																				 #####
+#####	This file is part of GoldAlign.												 #####
+#####																				 #####
+#####	GoldAlign is free software: you can redistribute it and/or modify			 #####
+#####	it under the terms of the GNU General Public License as published by		 #####
+#####	the Free Software Foundation, either version 3 of the License, or			 #####
+#####	(at your option) any later version.											 #####
+#####																				 #####
+#####	GoldAlign is distributed in the hope that it will be useful,				 #####
+#####	but WITHOUT ANY WARRANTY; without even the implied warranty of				 #####
+#####	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				 #####
+#####	GNU General Public License for more details.								 #####
+#####																				 #####
+#####	You should have received a copy of the GNU General Public License			 #####
+#####	along with GoldAlign.  If not, see <http://www.gnu.org/licenses/>.			 #####
+#####																				 #####
+##########################################################################################
+##########################################################################################
+#####																				 #####
+#####	GoldAlign, specifically in the file index.js, utilizes elements of			 #####
+#####	Chris Callison-Burch’s word alignment tool:									 #####
+#####																				 #####
+#####		Zaidan, Omar, and Chris Callison-Burch. "Fast. Cheap and Creative: 		 #####
+#####			Evaluating Translation Quality Using Amazon’s Mechanical Turk."		 #####
+#####			Proceedings of the 2009 Conference on Empirical Methods in 			 #####
+#####			Natural Language Processing. 2009.									 #####
+#####			<https://www.aclweb.org/anthology/D/D09/D09-1030.pdf>.				 #####
+#####		(see locally: pdf/callison-burch_2009.pdf)								 #####
+#####																				 #####
+#####		Callison-Burch, Chris, David Talbot, and Miles Osborne. 				 #####
+#####			"Statistical machine translation with word-and sentence-aligned 	 #####
+#####			parallel corpora." Proceedings of the 42nd Annual Meeting of the 	 #####
+#####			Association for Computational Linguistics. 2004.					 #####
+#####			<https://aclweb.org/anthology/P/P04/P04-1023.pdf>.					 #####
+#####		(see locally: pdf/callison-burch_2004.pdf)								 #####
+#####																				 #####
+##########################################################################################
+##########################################################################################
+##########################################################################################
+
+echo $'\nProcesses Running:'
+ps -ef | grep "node \./app\.js"
+
+echo ""

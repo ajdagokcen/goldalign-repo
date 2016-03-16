@@ -1,0 +1,532 @@
+
+/*****************************************************************************************
+******************************************************************************************
+******************************************************************************************
+*****																				 *****
+*****	GoldAlign:	a graphical interface for gold-standard corpus annotation		 *****
+*****				of alignment and paraphrasing									 *****
+*****	Copyright (C) 2016 Ajda Gokcen												 *****
+*****																				 *****
+*****	This file is part of GoldAlign.												 *****
+*****																				 *****
+*****	GoldAlign is free software: you can redistribute it and/or modify			 *****
+*****	it under the terms of the GNU General Public License as published by		 *****
+*****	the Free Software Foundation, either version 3 of the License, or			 *****
+*****	(at your option) any later version.											 *****
+*****																				 *****
+*****	GoldAlign is distributed in the hope that it will be useful,				 *****
+*****	but WITHOUT ANY WARRANTY; without even the implied warranty of				 *****
+*****	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				 *****
+*****	GNU General Public License for more details.								 *****
+*****																				 *****
+*****	You should have received a copy of the GNU General Public License			 *****
+*****	along with GoldAlign.  If not, see <http://www.gnu.org/licenses/>.			 *****
+*****																				 *****
+******************************************************************************************
+******************************************************************************************
+*****																				 *****
+*****	GoldAlign, specifically in the file index.js, utilizes elements of			 *****
+*****	Chris Callison-Burch’s word alignment tool:									 *****
+*****																				 *****
+*****		Zaidan, Omar, and Chris Callison-Burch. "Fast. Cheap and Creative: 		 *****
+*****			Evaluating Translation Quality Using Amazon’s Mechanical Turk."		 *****
+*****			Proceedings of the 2009 Conference on Empirical Methods in 			 *****
+*****			Natural Language Processing. 2009.									 *****
+*****			<https://www.aclweb.org/anthology/D/D09/D09-1030.pdf>.				 *****
+*****		(see locally: pdf/callison-burch_2009.pdf)								 *****
+*****																				 *****
+*****		Callison-Burch, Chris, David Talbot, and Miles Osborne. 				 *****
+*****			"Statistical machine translation with word-and sentence-aligned 	 *****
+*****			parallel corpora." Proceedings of the 42nd Annual Meeting of the 	 *****
+*****			Association for Computational Linguistics. 2004.					 *****
+*****			<https://aclweb.org/anthology/P/P04/P04-1023.pdf>.					 *****
+*****		(see locally: pdf/callison-burch_2004.pdf)								 *****
+*****																				 *****
+******************************************************************************************
+******************************************************************************************
+******************************************************************************************/
+
+/********** NEW CLASSES **********/
+
+/***** BASICS *****/
+
+body { overflow-y:scroll; }
+
+/***** MISCELLANY *****/
+
+/* general page layout */
+.module {
+	/*background-color:blue;*/
+	margin:0px;
+	/* top right-left bottom */
+	padding: 50px 15px 15px;
+	/* THIS INLINE-BLOCK GUY FIXES THE MOBILE OVERFLOW ISSUE */
+	display: inline-block;
+	position: relative;
+	/*width:100%;*/
+}
+/*.module#Home { display:inline-block; }
+.module#Guide, .module#Overview, .module#InProgress, .module#Workspace, .module#Settings { display:none; }*/
+
+/* make things look clicky even when they're not buttons or hrefs */
+.clicky	{ cursor: pointer; }
+
+/* prevent selection, dragging, etc. */
+.untext {
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+
+	user-drag: none; 
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+}
+
+.blacklink A:link, .blacklink A:visited, .blacklink A:active,
+.blacklink A:hover { text-decoration: none; color: black; }
+
+.whitelink A:link, .whitelink A:visited, .whitelink A:active,
+.whitelink A:hover { text-decoration: none; color: white; }
+
+/***** GRID TABULAR CLASSES *****/
+
+/* rename these for their functions? eh, it'd be too long of names */
+/* black = sure, gray = poss, white = no, red = user S/N clash + no arbit, lightpink = user S/P clash + no arbit, blue = user agree + no arbit */
+td.black		{ background-color: black;}
+/*td.white		{ background-color: #EEEEEE;}*/
+td.white		{ background-color: #EBEBEB;}
+td.gray 		{ background-color: gray;} /*#808080*/
+td.red			{ background-color: red;}
+td.blue			{ background-color: blue;}
+td.lightred		{ background-color: lightpink;}
+td.lightblue	{ background-color: lightskyblue;}
+td.purple		{ background-color: purple;}
+td.lightpurple	{ background-color: plum;}
+td.redpurple	{ background-color: mediumvioletred;}
+td.bluepurple	{ background-color: darkorchid;}
+
+/* general grid table class */
+.vOther {
+/*	width: 30px;
+	height: 30px;
+	table-layout: fixed;
+	border: 2px solid #FFF;
+	border-spacing: 2px;*/
+	border-spacing:2px;
+	border-collapse:separate;
+	min-width: 30px;
+	min-height: 30px;
+}
+
+/* class for divs within cells to contain vertical text */
+.vContent {
+	webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+	-webkit-writing-mode:vertical-rl;
+	-ms-writing-mode:tb-rl;
+	writing-mode:vertical-rl;
+}
+
+/* heading row/column cell classes */
+.vHead {
+	padding: 5px;
+	width: 30px;
+	text-align:left;
+	vertical-align:bottom;
+	white-space:nowrap;
+}
+.vTail {
+	padding: 5px;
+	width: 30px;
+	text-align:left;
+	vertical-align:top;
+	white-space:nowrap;
+}
+.vLeft {
+	padding: 5px;
+	height: 30px;
+	text-align:right;
+	white-space:nowrap;
+}
+.vRight {
+	padding: 5px;
+	height: 30px;
+	text-align:left;
+	white-space:nowrap;
+}
+
+/***** NON-GRID TABULAR CLASSES *****/
+
+/*	default			= #FFFFFF
+	default:hover	= #EBEBEB
+	info			= #d9edf7
+	info:hover		= #afd9ee
+	info			= #5bc0de
+	info:hover		= #39b3d7
+	primary			= #428bca
+	primary:hover	= #3071a9
+*/
+
+table.hovery tr:hover { background-color:#EBEBEB; }
+
+table.hovery tr.selected { background-color:#5bc0de; color:#FFFFFF; }
+table.hovery tr.selected:hover { background-color:#39b3d7; color:#FFFFFF; }
+table.hovery tr.selected td.main { background-color:#428bca; /*color:#FFFFFF;*/ }
+table.hovery tr.selected:hover td.main { background-color:#3071a9; }
+
+table.hovery tr.unstarted { background-color:auto; color:#000000 }
+table.hovery tr.unstarted:hover { background-color:auto; color:#000000 }
+table.hovery tr.unstarted td.main { background-color:lightpink; color:#000000 }
+table.hovery tr.unstarted:hover td.main { background-color:#ff8fa0; color:#000000 }
+
+table.hovery tr.incomplete { background-color:auto; color:#000000 }
+table.hovery tr.incomplete:hover { background-color:auto; color:#000000 }
+table.hovery tr.incomplete td.main { background-color:plum; color:#000000 }
+table.hovery tr.incomplete:hover td.main { background-color:#d383d3; color:#000000 }
+
+table.hovery tr.complete { background-color:auto; color:#000000 }
+table.hovery tr.complete:hover { background-color:auto; color:#000000 }
+table.hovery tr.complete td.main { background-color:#EBEBEB; color:#000000 }
+table.hovery tr.complete:hover td.main { background-color:#D0D0D0; color:#000000 }
+
+table.hovery tr.notready { background-color:auto; color:#000000 }
+table.hovery tr.notready:hover { background-color:transparent; color:#000000 }
+table.hovery tr.notready td.main { background-color:mistyrose; color:#000000 }
+table.hovery tr.notready:hover td.main { background-color:mistyrose; color:#000000 }
+
+table.hovery tr td .btn { 
+	padding:0px;
+	width:34px;
+	height:34px;
+	overflow:hidden;
+	vertical-align:middle;
+	text-align:center;
+	justify-content:center;
+}
+
+table.dataset {
+	white-space:nowrap;
+	border-spacing: 0px 2px;
+	border-collapse:separate;
+}
+
+table.dataset tr {
+	vertical-align:middle;
+	height:50px;
+}
+
+table.dataset th {
+	padding:10px;
+	text-align:right;
+}
+
+table.dataset tr td {
+	padding:10px;
+	text-align:center;
+}
+
+table.dataset tr td.main {
+	width:130px;
+}
+
+/***** BUTTONS *****/
+
+.sq-sm {
+	padding:0px;
+	width:34px;
+	height:34px;
+	overflow:hidden;
+	vertical-align:middle;
+	text-align:center;
+	justify-content:center;
+}
+
+/***** THING *****/
+
+@media screen and (max-width: 768px) {
+	.side-collapse-container{
+		width:100%;
+		position:relative;
+		left:0;
+		transition:left .4s;
+	}
+	.side-collapse-container.out{
+		left:200px;
+	}
+	.side-collapse {
+		top:50px;
+		bottom:0;
+		left:0;
+		width:200px;
+		position:fixed;
+		overflow:hidden;
+		transition:width .4s;
+	}
+	.side-collapse.in {
+		width:0;
+	}
+}
+
+/********** MOVED FROM THE JS/HTML **********/
+
+/***** NAV TITLE *****/
+#ico { position:relative; top:-.5mm; }
+#gold {
+	font-variant:small-caps;
+	color:#FFC400;
+	font-weight:900;
+}
+#align {
+	font-variant:small-caps;
+	color:white;
+	font-weight:100;
+}
+
+/***** GRID TITLE *****/
+/***** FORM BUTTONS / BATCH MENU WIDGET *****/
+
+
+/***** CONTEXT LINKS *****/
+#context-panel {
+	padding:0; margin:0;
+	width:380px;
+	overflow:hidden;
+	box-shadow:none; -webkit-box-shadow:none;
+}
+#context-panel .list-group-item-info { font-size:large; }
+#context-panel .sublinks { text-align:center; }
+#context-panel .sublinks .list-group-item-info { font-size:larger; }
+
+/***** PARAPHRASE JUDGMENT *****/
+.emph { font-weight:bold; }
+.emph.red { color:red; }
+.emph.blue { color:blue; }
+.emph.purple { color:purple; }
+.emph.gray { color:gray; }
+#is, #not { min-width: 190px; }
+
+/***** COMMENT BOX *****/
+#comments {
+	width:380px;
+	vertical-align:top;
+	resize:vertical;
+	padding:5px;
+}
+
+/***** DEFAULT TEXT *****/
+/***** SETTINGS PAGE *****/
+.setter { min-width:50px; }
+
+/***** USER DISPLAY *****/
+.usertext { font-variant:small-caps; color:white; }
+.usertext .user0 { color:plum; font-weight:bold; }
+.usertext .subtext { color:gray; }
+.usertext .user1 { color:lightpink; font-weight:bold; }
+.usertext .user2 { color:lightskyblue; font-weight:bold; }
+
+/***** SELECTION WIDGETS *****/
+#selection_widgets .row .control-label {
+	text-align:right;
+	font-variant:small-caps;
+}
+
+/***** BATCH NAVIGATION *****/
+#batch_navigation .hovery tr { vertical-align:middle; }
+#batch_navigation .hovery tr th { text-align:right; padding:10px; white-space:nowrap; }
+#batch_navigation .hovery tr td { text-align:left; padding:10px; max-width:600px; }
+#batch_navigation .hovery tr td p { margin-top:0.5em; margin-bottom:0.5em; }
+
+/***** INTRO TEXT *****/
+#info-accordion .list-group .list-group-item-info { font-size:x-large; font-variant:small-caps; font-weight:bold; }
+.key-col {
+	white-space:nowrap;
+	border-spacing:0px 2px;
+	border-collapse:separate;
+	margin:5px;
+}
+.key-col .vLeft { font-size:small; }
+/*.td:last-child .key-col { border-right:none; }*/
+.td:nth-child(1) .key-col { border-right:5px solid black; }
+
+
+/********** FONT AWESOME FIXES **********/
+
+/* top-bottom right-left */
+.fa-stack { margin: -4px -7px; }
+
+/********** BOOTSTRAP REWRITES **********/
+
+/***** BUTTON FIXES *****/
+
+/* prevents button groups from splitting */
+.btn-group { display: flex; }
+
+/* centers buttons and button groups */
+.center { justify-content: center; }
+
+/* lazy fix for home/selection page dropdowns */
+.col-xs-6.btn-group .btn.dropdown-toggle,
+.col-xs-6.btn-group .dropdown-menu {
+	min-width:150px;
+}
+.col-xs-6.btn-group {
+	padding:0;
+	margin:0;
+}
+
+/* lazy fix for PerPage dropup */
+.dropup > .btn-sm.dropdown-toggle,
+.dropup .dropdown-menu {
+/*.perpage {*/
+	padding:0px;
+	margin:0px 4px;
+	min-width:55px;
+	width:55px;
+	min-height:34px;
+	overflow:hidden;
+	vertical-align:middle;
+	text-align:center;
+	justify-content:center;
+}
+.dropup .dropdown-menu li {
+	margin:0;
+	padding:0;
+	min-width:55px;
+	width:55px;
+	overflow:hidden;
+	vertical-align:middle;
+	text-align:center;
+	justify-content:center;
+}
+
+/* fix for BatchMenuWidget dropdown menu */
+.dropdown-menu.dropdown-menu-center {
+	float:left;
+	position:fixed;
+	left: calc(50% - 110px);
+	top: 215px;
+	width:220px;
+	vertical-align:middle;
+	text-align:center;
+	justify-content:center;
+}
+/*.dropdown-menu.dropdown-menu-center li.divider,
+.dropdown-menu.dropdown-menu-center li {
+	position:relative;
+}*/
+
+/********** CURSOR FIXES **********/
+
+.pager .disabled > a,
+.pager .disabled > a:hover,
+.pager .disabled > a:focus,
+.pager .disabled > span,
+.pagination > .disabled > span,
+.pagination > .disabled > span:hover,
+.pagination > .disabled > span:focus,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > a:focus,
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn,
+input[type="radio"][disabled],
+input[type="checkbox"][disabled],
+.radio[disabled],
+.radio-inline[disabled],
+.checkbox[disabled],
+.checkbox-inline[disabled],
+fieldset[disabled] input[type="radio"],
+fieldset[disabled] input[type="checkbox"],
+fieldset[disabled] .radio,
+fieldset[disabled] .radio-inline,
+fieldset[disabled] .checkbox,
+fieldset[disabled] .checkbox-inline,
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+	cursor: default;
+}
+.nav > li.disabled > a:hover,
+.nav > li.disabled > a:focus,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+	cursor: pointer;
+}
+
+/********** NAVBAR FIXES **********/
+
+.container {
+	margin:0px;
+	padding:0px;
+	padding-top:10px;
+}
+
+.navbar-toggle.navbar-left {
+	float: left;
+	margin-left: 0px;
+}
+
+.navbar-toggle.navbar-right {
+	float: right;
+	margin-right: 0px;
+}
+
+.navbar-toggle {
+	width: auto;
+	height: auto;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.navbar .divider-vertical {
+	height: 50px;
+	width: 20px;
+}
+
+@media (max-width: 767px) {
+	.navbar-collapse .nav > .divider-vertical {
+		height: 10px;
+		width: 50px;
+		margin: 9px 0;
+	}
+}
+
+.nav-tabs > li, .nav-pills > li { float:right; }
+
+.nav-tabs, .nav-pills {
+	justify-content:center;
+	text-align:center;
+	margin: 0px;
+	padding: 0px;
+}
+
+/********** HTML REWRITES **********/
+
+body {
+	margin:0px;
+	padding:0px;
+/*	padding-top: 50px;*/
+}
+
+a, a:link, a:visited, a:active, a:hover {
+	cursor: pointer;
+	color: inherit;
+	text-decoration: none;
+}
+
+label	{ cursor: pointer; }
+img		{ pointer-events: none; }
+
+h3 { font-variant: small-caps; }
+
+/****************************************/
+
